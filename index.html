@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عقد بيع سيارة - معرض الصافي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="main-interface-header">
+            <h1><i class="fas fa-file-contract"></i> نظام عقود بيع السيارات الإلكتروني</h1>
+            <p class="subtitle">معرض الصافي للسيارات</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-keyboard"></i> تعبئة بيانات العقد</h2>
+                
+                <div class="form-group">
+                    <label for="contractDate">تاريخ العقد:</label>
+                    <input type="date" id="contractDate" value="">
+                </div> 
+                 <div class="form-group">
+                    <label for="contractD">رقم العقد:</label>
+                    <input type="number" id="contractD" value="10">
+                </div>
+
+                <h3 class="section-subtitle"><i class="fas fa-user-tie"></i> بيانات البائع</h3>
+                <div class="form-group">
+                    <label for="sellerName">اسم البائع (المفوض):</label>
+                    <input type="text" id="sellerName" placeholder="الاسم الرباعي">
+                </div>
+                <div class="form-group">
+                    <label for="sellerJob">المهنة:</label>
+                    <input type="text" id="sellerJob" placeholder="مهنة البائع">
+                </div>
+                <div class="form-group">
+                    <label for="sellerAddress">العنوان:</label>
+                    <input type="text" id="sellerAddress" placeholder="مكان الإقامة والعمل">
+                </div>
+                <div class="form-group">
+                    <label for="sellerId">رقم الهوية/البطاقة الوطنية الموحدة:</label>
+                    <input type="text" id="sellerId" placeholder="رقم الهوية أو البطاقة">
+                </div>
+                <div class="form-group">
+                    <label for="sellerPhone">رقم الهاتف:</label>
+                    <input type="tel" id="sellerPhone" placeholder="رقم هاتف البائع">
+                </div>
+                
+                <h3 class="section-subtitle"><i class="fas fa-user"></i> بيانات المشتري</h3>
+                <div class="form-group">
+                    <label for="buyerName">اسم المشتري:</label>
+                    <input type="text" id="buyerName" placeholder="الاسم الرباعي">
+                </div>
+                <div class="form-group">
+                    <label for="buyerJob">المهنة:</label>
+                    <input type="text" id="buyerJob" placeholder="مهنة المشتري">
+                </div>
+                <div class="form-group">
+                    <label for="buyerAddress">العنوان:</label>
+                    <input type="text" id="buyerAddress" placeholder="مكان الإقامة والعمل">
+                </div>
+                <div class="form-group">
+                    <label for="buyerId">رقم الهوية/البطاقة الوطنية الموحدة:</label>
+                    <input type="text" id="buyerId" placeholder="رقم الهوية أو البطاقة">
+                </div>
+                <div class="form-group">
+                    <label for="buyerPhone">رقم الهاتف:</label>
+                    <input type="tel" id="buyerPhone" placeholder="رقم هاتف المشتري">
+                </div>
+
+                <h3 class="section-subtitle"><i class="fas fa-car-side"></i> بيانات السيارة</h3>
+                <div class="form-group">
+                    <label for="carNumber">رقم لوحة السيارة:</label>
+                    <input type="text" id="carNumber" placeholder="أرقام وحروف اللوحة">
+                </div>
+                <div class="form-group">
+                    <label for="carType">نوع السيارة:</label>
+                    <input type="text" id="carType" placeholder="مثال: خصوصي">
+                </div>
+                <div class="form-group">
+                    <label for="carBrand">ماركة السيارة:</label>
+                    <input type="text" id="carBrand" placeholder="مثال: تويوتا">
+                </div>
+                <div class="form-group">
+                    <label for="carModel">موديل السيارة (سنة الصنع):</label>
+                    <input type="text" id="carModel" placeholder="مثال: 2020">
+                </div>
+                <div class="form-group">
+                    <label for="carSize">حجم المحرك (سلندر):</label>
+                    <input type="text" id="carSize" placeholder="مثال: 4 سلندر / 2500 CC">
+                </div>
+                <div class="form-group">
+                    <label for="carColor">لون السيارة:</label>
+                    <input type="text" id="carColor" placeholder="مثال: أبيض">
+                </div>
+                <div class="form-group">
+                    <label for="chassisNumber">رقم الشاصي:</label>
+                    <input type="text" id="chassisNumber" placeholder="الرقم التعريفي للسيارة">
+                </div>
+
+                <h3 class="section-subtitle"><i class="fas fa-money-bill-wave"></i> البيانات المالية</h3>
+                <div class="form-group">
+                    <label for="price">مبلغ البيع الكلي:</label>
+                    <input type="number" id="price" placeholder="المبلغ بالأرقام" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="deposit">المبلغ الواصل:</label>
+                    <input type="number" id="deposit" placeholder=" المبلغ الواصل إن وجد" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="remainingAmount">المبلغ المتبقي :</label>
+                    <input type="text" id="remainingAmount" readonly value="0">
+                </div>
+                <div class="form-group">
+                    <label for="additionalNotesInput">ملاحظات إضافية (تظهر في العقد):</label>
+                    <textarea id="additionalNotesInput" rows="4" placeholder="اكتب أي ملاحظات أو شروط إضافية هنا..."></textarea>
+                </div>
+            </div>
+
+            <div class="contract-section" id="contractSection">
+                <div class="watermark"></div>
+                
+                <div class="contract-header-container">
+                    <div class="contract-printable-header">
+                        <div class="logo-area">
+                            <img src="logo.png" alt="Company Logo" class="contract-logo">
+                        </div>
+                        <div class="company-info-area">
+                            <div class="company-details">
+                                <span><i class="fas fa-map-marker-alt"></i> البصرة - شارع الوفود - معارض الوفود - معرض الصافي </span>
+                                <span><i class="fas fa-phone"></i> 07736663055 - 07801333666</span>
+                            </div>
+                        </div>
+                        <div class="contract-title-date-area">
+                            <h1 class="contract-main-title">عـقـد بـيـع سـيـارة</h1>
+                            <div class="contract-date-display-wrapper">
+                                <p class="contract-date-display">التاريخ: <span id="contractDateFull">/ /</span></p>
+                            </div>
+                            <div class="contract-counter-display-wrapper">
+                               <p class="contract-conter-display">رقم العقد : <span id="contractDFull"> - </span></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contract-content-body">
+                    <div class="parties-section">
+                        <div class="party contract-seller-party">
+                            <h3 class="party-title">الطرف الأول (البائع)</h3>
+                            <div class="contract-field">
+                                <span class="field-label">الاسم:</span> <span id="contractSellerName" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">المهنة:</span> <span id="contractSellerJob" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">العنوان:</span> <span id="contractSellerAddress" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">رقم الهوية:</span> <span id="contractSellerId" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">رقم الهاتف:</span> <span id="contractSellerPhone" class="dynamic-value">.....................</span>
+                            </div>
+                        </div>
+
+                        <div class="party contract-buyer-party">
+                            <h3 class="party-title">الطرف الثاني (المشتري)</h3>
+                            <div class="contract-field">
+                                <span class="field-label">الاسم:</span> <span id="contractBuyerName" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">المهنة:</span> <span id="contractBuyerJob" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">العنوان:</span> <span id="contractBuyerAddress" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">رقم الهوية:</span> <span id="contractBuyerId" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">رقم الهاتف:</span> <span id="contractBuyerPhone" class="dynamic-value">.....................</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="contract-paragraph">وقد اتفق الطرفان وهما بكامل الأهلية المعتبرة شرعاً وقانوناً على الآتي:</p>
+
+                    <div class="car-financial-data-container">
+                        <div class="financial-data-wrapper">
+                            <p class="contract-paragraph">المبلغ الكلي للبيع :  (<span id="contractPrice" class="dynamic-value">0</span>) دينار عراقي، فقط لا غير، كتابتا: (<span id="contractPriceText" class="dynamic-value">صفر</span>) دينار عراقي.</p>
+                            <p class="contract-paragraph">المبلغ المستلم :  (<span id="contractDeposit" class="dynamic-value">0</span>) دينار عراقي، والمبلغ المتبقي :  (<span id="contractRemainingAmount" class="dynamic-value">0</span>) دينار عراقي.</p>
+                        </div>
+                        <div class="car-data-container">
+                            <p class="contract-paragraph">مواصفات المركبـــــــة : </p>
+                            <div class="contract-field">
+                                <span class="field-label">رقم اللوحة:</span> <span id="contractCarNumber" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">نوع المركبة:</span> <span id="contractCarType" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">ماركة المركبة:</span> <span id="contractCarBrand" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">موديل المركبة:</span> <span id="contractCarModel" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">حجم المحرك:</span> <span id="contractCarSize" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">لون المركبة:</span> <span id="contractCarColor" class="dynamic-value">.....................</span>
+                            </div>
+                            <div class="contract-field">
+                                <span class="field-label">رقم الشاصي:</span> <span id="contractChassisNumber" class="dynamic-value">.....................</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="additional-notes">
+                        <h4 class="notes-title">ملاحظات إضافية:</h4>
+                        <p id="contractAdditionalNotes" class="notes-text">لا توجد ملاحظات إضافية.</p>
+                    </div>
+
+                    <div class="contract-obligations-styled">
+                        <h4 class="obligations-title">بنود العقد:</h4>
+                        <ul>
+                            <li>التسليم الفوري: تم تسليم السيارة المذكورة أعلاه للطرف الثاني فور التوقيع على هذا العقد.</li>
+                            <li>الملكية الكاملة: يقر الطرف الأول (البائع) بأن السيارة المبيعة خالية من أي حقوق للغير أو رهون أو مطالبات مالية أو قانونية.</li>
+                            <li>فحص السيارة: يقر الطرف الثاني (المشتري) بأنه قد عاين السيارة وفحصها فحصاً نافياً للجهالة، وقبلها بحالتها الراهنة.</li>
+                            <li>المسؤولية القانونية: يتحمل الطرف الثاني (المشتري) المسؤولية القانونية الكاملة عن السيارة اعتباراً من تاريخ توقيع هذا العقد.</li>
+                            <li> تم تحرير هذا العقد من نسختين بيد كل طرف نسخة للعمل بموجبها، ونسخة ثالثة في المكتب كأرشيف بتاريخ : <span id="contractDateText">/ /</span></li>
+                        </ul>
+                        <p class="disclaimer">المكتب غير مسؤول عن رسميات السيارة والطرفان يعرف كل منهما الآخر، ويسقط العقد خلال ثلاثون يوماً بعد البيع.</p>
+                    </div>
+
+
+
+
+
+
+   <div class="contract-content-body">
+                    <div class="parties-section">
+                        <div class="party contract-seller-party">
+                            <div class="signature-line-contract">توقيع البائع</div>
+                            <div id="contractSellerSignature" class="signature-value">.....................</div>
+                        </div>
+
+                        <div class="party contract-buyer-party">
+                            <div class="signature-line-contract">توقيع المشتري</div>
+                            <div id="contractBuyerSignature" class="signature-value">.....................</div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button id="updateContract" class="btn btn-primary"><i class="fas fa-sync-alt"></i> تحديث العقد</button>
+            <button id="printContract" class="btn btn-primary"><i class="fas fa-print"></i> طباعة العقد</button>
+            <button id="resetForm" class="btn btn-secondary"><i class="fas fa-redo"></i> مسح البيانات</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
