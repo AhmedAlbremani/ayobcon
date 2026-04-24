@@ -104,6 +104,13 @@
 
                 <h3 class="section-subtitle"><i class="fas fa-money-bill-wave"></i> البيانات المالية</h3>
                 <div class="form-group">
+                 <label for="currency">عملة البيع:</label>
+                 <select id="currency">
+                 <option value="دينار عراقي">دينار عراقي</option>
+                 <option value="دولار أمريكي">دولار أمريكي</option>
+                 </select>
+                </div>
+                <div class="form-group">
                     <label for="price">مبلغ البيع الكلي:</label>
                     <input type="number" id="price" placeholder="المبلغ بالأرقام" value="0">
                 </div>
@@ -193,8 +200,8 @@
 
                     <div class="car-financial-data-container">
                         <div class="financial-data-wrapper">
-                            <p class="contract-paragraph">المبلغ الكلي للبيع :  (<span id="contractPrice" class="dynamic-value">0</span>) دينار عراقي، فقط لا غير، كتابتا: (<span id="contractPriceText" class="dynamic-value">صفر</span>) دينار عراقي.</p>
-                            <p class="contract-paragraph">المبلغ المستلم :  (<span id="contractDeposit" class="dynamic-value">0</span>) دينار عراقي، والمبلغ المتبقي :  (<span id="contractRemainingAmount" class="dynamic-value">0</span>) دينار عراقي.</p>
+                            <p class="contract-paragraph">المبلغ الكلي للبيع :  (<span id="contractPrice" class="dynamic-value">0</span>)(<span id="contractPriceText" class="dynamic-value">صفر</span>)</p>
+                            <p class="contract-paragraph">المبلغ المستلم :  (<span id="contractDeposit" class="dynamic-value">0</span>) والمبلغ المتبقي :  (<span id="contractRemainingAmount" class="dynamic-value">0</span>).</p>
                         </div>
                         <div class="car-data-container">
                             <p class="contract-paragraph">مواصفات المركبـــــــة : </p>
