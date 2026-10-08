@@ -1,4 +1,4 @@
-// Firebase web app configuration
+// Firebaweb app configuration
 export const firebaseConfig = {
   apiKey: "AIzaSyDYCXA8U1Spa1tjMV3w_pfzZrmO3ESIa8Y",
   authDomain: "contracter-3c12c.firebaseapp.com",
