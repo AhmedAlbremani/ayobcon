@@ -1,6 +1,6 @@
-// Firebase web app configuration (public identifiers; access is protected by Firestore Rules).
+// Firebase web app configuration
 export const firebaseConfig = {
-  apiKey: "AIzaSyDVCXA8U1Spa1tiMV3w_pfz7rmO3ESIa8Y",
+  apiKey: "AIzaSyDYCXA8U1Spa1tjMV3w_pfzZrmO3ESIa8Y",
   authDomain: "contracter-3c12c.firebaseapp.com",
   projectId: "contracter-3c12c",
   storageBucket: "contracter-3c12c.firebasestorage.app",
