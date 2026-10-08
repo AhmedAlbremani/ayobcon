@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function counterPath() { return /databases/$(database)/documents/metadata/contractCounter; }
+    function contractPath(number) { return /databases/$(database)/documents/contracts/$(string(number)); }
+    function validFields() {
+      return request.resource.data.fields is map
+        && request.resource.data.fields.keys().hasAll(['sellerName', 'buyerName', 'contractDate'])
+        && request.resource.data.fields.sellerName is string
+        && request.resource.data.fields.buyerName is string
+        && request.resource.data.fields.sellerName.size() <= 500
+        && request.resource.data.fields.buyerName.size() <= 500;
+    }
+    match /metadata/contractCounter {
+      allow get: if signedIn();
+      allow list, delete: if false;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['lastNumber'])
+        && request.resource.data.lastNumber == 1001
+        && existsAfter(contractPath(1001))
+        && getAfter(contractPath(1001)).data.number == 1001;
+      allow update: if signedIn()
+        && request.resource.data.keys().hasOnly(['lastNumber'])
+        && resource.data.lastNumber is int
+        && request.resource.data.lastNumber == resource.data.lastNumber + 1
+        && existsAfter(contractPath(request.resource.data.lastNumber))
+        && getAfter(contractPath(request.resource.data.lastNumber)).data.number == request.resource.data.lastNumber
+        && !exists(contractPath(request.resource.data.lastNumber));
+    }
+    match /contracts/{contractId} {
+      allow get, list: if signedIn();
+      allow create: if signedIn() && validFields()
+        && request.resource.data.keys().hasOnly(['number','fields','revision','createdBy','updatedBy','createdAt','updatedAt'])
+        && request.resource.data.number is int
+        && request.resource.data.number >= 1001
+        && contractId == string(request.resource.data.number)
+        && request.resource.data.revision == 1
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && existsAfter(counterPath())
+        && getAfter(counterPath()).data.lastNumber == request.resource.data.number
+        && ( !exists(counterPath()) && request.resource.data.number == 1001
+             || exists(counterPath()) && get(counterPath()).data.lastNumber == request.resource.data.number - 1 );
+      allow update: if signedIn() && validFields()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fields','revision','updatedBy','updatedAt'])
+        && resource.data.number == int(contractId)
+        && request.resource.data.revision == resource.data.revision + 1
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+  }
+}
