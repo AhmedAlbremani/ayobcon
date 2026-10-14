@@ -264,8 +264,12 @@
 
                             </div>
                          <div class="party contract-buyer-party">
-                            <div class="signature-line-contract">ختم المعرض </div>
-                            <div id="contractBuyerSignature" class="signature-value">.....................</div>
+                            <div class="signature-line-contract">ختم المعرض الإلكتروني</div>
+                            <div id="qr-seal" class="qr-seal" hidden>
+                              <div id="qr-image" class="qr-image" aria-label="رمز QR للتحقق من العقد"></div>
+                              <div id="qr-unique" class="qr-unique" dir="ltr"></div>
+                            </div>
+                            <div id="qr-placeholder" class="signature-value">يظهر بعد حفظ العقد</div>
 
                             </div>
                         </div>
@@ -282,6 +286,8 @@
     </div>
 
     <script src="script.js"></script>
+    <!-- Library computes QR on the device; contract data is not sent to a QR service. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
     <script type="module" src="js/firebase-contracts.js"></script>
 </body>
 </html>

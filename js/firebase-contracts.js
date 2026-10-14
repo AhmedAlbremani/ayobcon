@@ -12,6 +12,7 @@ const auth = app ? getAuth(app) : null;
 const db = app ? getFirestore(app) : null;
 let user = null, currentNumber = null, currentRevision = null, busy = false, dirty = false;
 let candidateNumber = null, archiveItems = [], archiveCursor = null, archiveDone = false;
+let verificationId = null;
 
 const style = document.createElement('style');
 style.textContent = `
@@ -38,7 +39,7 @@ login.innerHTML=`<section><h2>تسجيل الدخول إلى نظام العقو
 document.body.append(login);
 const tools = document.createElement('div');
 tools.id='fb-tools';
-tools.innerHTML=`<div><strong>إدارة العقود الإلكترونية</strong> — <span id="fb-email-view"></span> <button type="button" id="fb-logout">تسجيل الخروج</button></div><div><button type="button" id="fb-new">عقد جديد</button><button type="button" id="fb-save">حفظ العقد</button><button type="button" id="fb-open">استدعاء العقد / بحث في المحفوظات</button></div><span class="fb-status" role="status" id="fb-status">—</span><div id="fb-history"></div>`;
+tools.innerHTML=`<div><strong>إدارة العقود الإلكترونية</strong> — <span id="fb-email-view"></span> <button type="button" id="fb-logout">تسجيل الخروج</button></div><div><button type="button" id="fb-new">عقد جديد</button><button type="button" id="fb-save">حفظ العقد</button><button type="button" id="fb-open">استدعاء العقد / بحث في المحفوظات</button></div><span class="fb-status" role="status" id="fb-status">—</span>`;
 const container = document.querySelector('body > .container');
 container?.insertBefore(tools, container.children[1]);
 // The contract's original HTML and CSS are untouched. This adds controls only.
@@ -50,6 +51,23 @@ const serialize = () => Object.fromEntries(fields.map(key=>[key, id(key)?.value 
 const refreshPreview = () => id('updateContract')?.click();
 const restore = data => { fields.forEach(key=>{if(id(key)) id(key).value = data[key] ?? '';}); refreshPreview(); };
 const setNumber = num => {if(contractD) contractD.value=num == null?'':String(num);refreshPreview();};
+const codeFor = (num, token) => `IQ-${num}-${token.replaceAll('-', '').toUpperCase()}`;
+function updateSeal() {
+ const seal=id('qr-seal'), placeholder=id('qr-placeholder'), node=id('qr-image');
+ if(!seal || !node)return;
+ node.replaceChildren();
+ const show = Number.isSafeInteger(currentNumber) && verificationId;
+ seal.hidden=!show; if(placeholder)placeholder.hidden=Boolean(show);
+ if(!show)return;
+ const code=codeFor(currentNumber,verificationId);
+ id('qr-unique').textContent=code;
+ const url=new URL('verify.html',location.href);
+ url.searchParams.set('id',verificationId);
+ if(typeof QRCode==='undefined'){message('مكتبة QR لم تُحمّل. افحص الاتصال بالإنترنت قبل الطباعة.',true);return;}
+ new QRCode(node,{text:url.href,width:100,height:100,correctLevel:QRCode.CorrectLevel.M});
+}
+
+
 async function suggestNumber() {
   if(!user || currentNumber!==null)return;
   const snapshot=await getDoc(doc(db,'metadata','contractCounter'));
@@ -59,21 +77,21 @@ async function suggestNumber() {
   setNumber(next);
   message(`رقم العقد المتوقع: ${next} — يتم تثبيت الرقم عند حفظ العقد، وقد يتغير إذا حفظ مستخدم آخر قبلك.`);
 }
-function resetNew() {
+function resetNew(skipSuggestion=false) {
   currentNumber=null; currentRevision=null;
   id('resetForm')?.click();
   if(id('currency')) id('currency').selectedIndex=0;
   if(id('contractDate')) {const date=new Date(); const local=new Date(date.getTime()-date.getTimezoneOffset()*60000); id('contractDate').value=local.toISOString().slice(0,10);}
-  candidateNumber=null;setNumber(null);dirty=false;
+  candidateNumber=null;verificationId=null;setNumber(null);updateSeal();dirty=false;
   message('جارٍ جلب رقم العقد التلقائي...');
-  suggestNumber().catch(err=>message('سيُعطى العقد رقماً تلقائياً عند الحفظ. '+errorText(err),true));
+  if(!skipSuggestion)suggestNumber().catch(err=>message('سيُعطى العقد رقماً تلقائياً عند الحفظ. '+errorText(err),true));
 }
 async function loadContract(num) {
   if (!Number.isSafeInteger(num) || num < 1001) throw Error('أدخل رقم عقد صحيحاً (1001 أو أكبر).');
   const snap=await getDoc(doc(db,'contracts',String(num)));
   if (!snap.exists()) throw Error('العقد غير موجود.');
   const data=snap.data();
-  restore(data.fields); currentNumber=num;currentRevision=data.revision;setNumber(num);dirty=false;
+  restore(data.fields); currentNumber=num;currentRevision=data.revision;verificationId=data.verificationId||null;setNumber(num);updateSeal();dirty=false;
   message(`تم فتح العقد ${num}. التعديل عليه سيحفظ بنفس الرقم.`);
 }
 const withBusy = async fn => {if(busy||!user)return;busy=true;tools.querySelectorAll('button').forEach(b=>b.disabled=true);try{await fn();}catch(err){message(errorText(err),true);}finally{busy=false;tools.querySelectorAll('button').forEach(b=>b.disabled=false);}};
@@ -89,22 +107,34 @@ async function save() {
       const target=doc(db,'contracts',String(next));
       const exists=await tx.get(target);
       if(exists.exists())throw Error('يوجد عقد بهذا الرقم؛ يجب إصلاح العداد بواسطة المسؤول.');
+      const token=crypto.randomUUID().replaceAll('-','');
       tx.set(counter,{lastNumber:next});
-      tx.set(target,{number:next,fields:values,revision:1,createdBy:user.uid,updatedBy:user.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
-      return next;
+      tx.set(target,{number:next,fields:values,verificationId:token,revision:1,createdBy:user.uid,updatedBy:user.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+      tx.set(doc(db,'publicVerifications',token),{number:next,code:codeFor(next,token),createdAt:serverTimestamp()});
+      return {number:next,token};
     });
-    currentNumber=number;currentRevision=1;candidateNumber=null;setNumber(number);dirty=false;message(`تم إصدار وحفظ العقد رقم ${number} بنجاح.`);
+    currentNumber=number.number;currentRevision=1;verificationId=number.token;candidateNumber=null;setNumber(currentNumber);updateSeal();dirty=false;message(`تم إصدار وحفظ العقد رقم ${currentNumber} بنجاح.`);
   } else {
     const number=currentNumber, expectedRevision=currentRevision;
     const target=doc(db,'contracts',String(number));
+    let mintedToken=null;
     const revision=await runTransaction(db,async tx=>{
       const state=await tx.get(target);
       if(!state.exists())throw Error('هذا العقد لم يعد موجوداً.');
       if(state.data().revision!==expectedRevision)throw Error('تم تعديل العقد من جهاز آخر. أعد استدعاءه قبل التعديل لمنع ضياع البيانات.');
-      tx.update(target,{fields:values,revision:expectedRevision+1,updatedBy:user.uid,updatedAt:serverTimestamp()});
+      const existingToken=state.data().verificationId;
+      if(existingToken){
+        tx.update(target,{fields:values,revision:expectedRevision+1,updatedBy:user.uid,updatedAt:serverTimestamp()});
+      } else {
+        // One-time QR migration for contracts created before this update.
+        const token=crypto.randomUUID().replaceAll('-','');
+        tx.update(target,{fields:values,verificationId:token,revision:expectedRevision+1,updatedBy:user.uid,updatedAt:serverTimestamp()});
+        tx.set(doc(db,'publicVerifications',token),{number,code:codeFor(number,token),createdAt:serverTimestamp()});
+        mintedToken=token;
+      }
       return expectedRevision+1;
     });
-    currentRevision=revision;dirty=false;message(`تم تحديث العقد ${number} بنجاح مع الاحتفاظ برقمه.`);
+    currentRevision=revision;if(mintedToken)verificationId=mintedToken;updateSeal();dirty=false;message(`تم تحديث العقد ${number} بنجاح مع الاحتفاظ برقمه.`);
   }
 }
 id('fb-login-form').addEventListener('submit',async e=>{e.preventDefault();if(!configured)return;id('fb-login-submit').disabled=true;id('fb-login-message').textContent='جارٍ تسجيل الدخول...';try{await signInWithEmailAndPassword(auth,id('fb-email').value.trim(),id('fb-password').value);}catch(err){id('fb-login-message').textContent=errorText(err);}finally{id('fb-login-submit').disabled=false;}});
@@ -112,56 +142,27 @@ id('fb-logout').addEventListener('click',()=>withBusy(()=>signOut(auth)));
 id('fb-new').addEventListener('click',()=>{if(!dirty||confirm('ستفقد التغييرات غير المحفوظة. متابعة؟'))resetNew();});
 id('fb-save').addEventListener('click',()=>withBusy(save));
 // The archive opens directly when clicking "استدعاء العقد", without asking for a number.
-const history=id('fb-history');
-history.innerHTML=`<label for="fb-search">البحث برقم العقد أو اسم البائع أو المشتري أو رقم السيارة</label><input id="fb-search" type="search" placeholder="اكتب الرقم أو الاسم أو رقم السيارة..."><div id="fb-search-summary" class="fb-muted"></div><div id="fb-archive-results" class="fb-archive-scroll"></div><button type="button" class="fb-load-more" id="fb-more">تحميل المزيد من العقود</button>`;
-const normalized = value => String(value??'').trim().toLocaleLowerCase('ar');
-function renderArchive(){
-  const term=normalized(id('fb-search').value);
-  const results=id('fb-archive-results');results.replaceChildren();
-  const matches=archiveItems.filter(item=>{
-    const d=item.data();
-    return [d.number,d.fields?.sellerName,d.fields?.buyerName,d.fields?.carNumber,d.fields?.chassisNumber,d.fields?.contractDate].some(v=>normalized(v).includes(term));
-  });
-  for(const item of matches){
-    const data=item.data();const b=document.createElement('button');b.type='button';
-    b.textContent=`العقد ${data.number} — ${data.fields?.sellerName||'بائع غير محدد'} / ${data.fields?.buyerName||'مشتري غير محدد'} — ${data.fields?.contractDate||''}`;
-    b.addEventListener('click',()=>withBusy(async()=>{
-      if(dirty&&!confirm('هناك تعديلات غير محفوظة. هل تريد استبدالها؟'))return;
-      await loadContract(data.number);history.style.display='none';
-    }));results.append(b);
-  }
-  id('fb-search-summary').textContent=matches.length ? `النتائج: ${matches.length}${archiveDone?'': ' (قد توجد نتائج أخرى؛ استخدم «تحميل المزيد»)'}` : (archiveDone?'لا يوجد عقد مطابق.':'لا توجد نتائج في العقود المحمّلة؛ يمكنك تحميل المزيد.');
-  id('fb-more').style.display=archiveDone?'none':'inline-block';
-}
-async function loadArchivePage(){
-  if(archiveDone)return;
-  let q=query(collection(db,'contracts'),orderBy('number','desc'),limit(100));
-  if(archiveCursor)q=query(collection(db,'contracts'),orderBy('number','desc'),startAfter(archiveCursor),limit(100));
-  const page=await getDocs(q);
-  archiveItems.push(...page.docs);
-  if(page.docs.length)archiveCursor=page.docs[page.docs.length-1];
-  archiveDone=page.docs.length<100;
-  renderArchive();
-}
-id('fb-open').addEventListener('click',()=>withBusy(async()=>{
-  if(history.style.display==='block'){history.style.display='none';return;}
-  history.style.display='block';
-  if(!archiveItems.length && !archiveDone)await loadArchivePage();
-  else renderArchive();
-  id('fb-search').focus();
-}));
-id('fb-search').addEventListener('input',renderArchive);
-id('fb-more').addEventListener('click',()=>withBusy(loadArchivePage));
+// Open a dedicated archive page rather than embedding records in the contract form.
+id('fb-open').addEventListener('click',()=>{window.location.assign('archive.html');});
+const selected = new URLSearchParams(location.search).get('contract');
 fields.forEach(key=>id(key)?.addEventListener('input',()=>{if(user){dirty=true;message('يوجد تعديل لم يُحفظ بعد.');}}));
-id('resetForm')?.addEventListener('click',()=>{if(!user)return;currentNumber=null;currentRevision=null;candidateNumber=null;dirty=false;setNumber(null);suggestNumber().catch(err=>message(errorText(err),true));});
-id('printContract')?.addEventListener('click',e=>{if(!user||currentNumber===null||dirty){e.stopImmediatePropagation();e.preventDefault();message('احفظ العقد أولاً قبل الطباعة كي يظهر رقمه الصحيح.',true);}},true);
-window.print=()=>{if(!user||currentNumber===null||dirty){message('يجب حفظ العقد والتعديلات قبل الطباعة.',true);return;}nativePrint();};
+id('resetForm')?.addEventListener('click',()=>{if(!user)return;currentNumber=null;currentRevision=null;candidateNumber=null;verificationId=null;dirty=false;setNumber(null);updateSeal();suggestNumber().catch(err=>message(errorText(err),true));});
+id('printContract')?.addEventListener('click',e=>{if(!user||currentNumber===null||dirty||!verificationId||!id('qr-image')?.querySelector('canvas, img')){e.stopImmediatePropagation();e.preventDefault();message('احفظ العقد أولاً وتأكد من ظهور رمز QR قبل الطباعة.',true);}},true);
+window.print=()=>{if(!user||currentNumber===null||dirty||!verificationId||!id('qr-image')?.querySelector('canvas, img')){message('يجب حفظ العقد وظهور رمز QR قبل الطباعة.',true);return;}nativePrint();};
 window.addEventListener('beforeunload',e=>{if(user&&dirty){e.preventDefault();e.returnValue='';}});
 if(configured){onAuthStateChanged(auth,account=>{
  user=account;
  document.body.classList.toggle('fb-authed',Boolean(account));
  login.style.display=account?'none':'flex';
  id('fb-email-view').textContent=account?.email||'';
- if(account){id('fb-password').value='';resetNew();}
- else{currentNumber=null;currentRevision=null;dirty=false;archiveItems=[];archiveCursor=null;archiveDone=false;history.style.display='none';}
+ if(account){
+   id('fb-password').value=''; resetNew(Boolean(selected));
+   if(selected && /^\d+$/.test(selected)){
+     const number=Number(selected);
+     if(Number.isSafeInteger(number) && number>=1001){
+       withBusy(()=>loadContract(number)).then(()=>{ history.replaceState(null,'',location.pathname); });
+     }
+   }
+ }
+ else{currentNumber=null;currentRevision=null;dirty=false;archiveItems=[];archiveCursor=null;archiveDone=false;verificationId=null;updateSeal();}
 });}else{id('fb-login-message').textContent='يلزم ضبط إعدادات Firebase في js/firebase-config.js ثم إعادة رفع الملفات.';id('fb-login-submit').disabled=true;}

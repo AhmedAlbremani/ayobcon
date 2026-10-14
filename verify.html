@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>التحقق من العقد — عقود السيارات</title><style>body{font:16px/1.8 system-ui,Arial,sans-serif;background:#f3f6fa;color:#162940;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}.card{background:white;border-radius:15px;padding:28px;box-shadow:0 4px 30px #0001;text-align:center;width:min(450px,88vw)}#result{font-weight:700;color:#124986}small{color:#555}</style></head><body><main class="card"><h2>التحقق الإلكتروني من العقد</h2><p id="result">جارٍ التحقق من السجل...</p><p id="code" dir="ltr"></p><small>تُعرض حالة تسجيل العقد ورقمه فقط، ولا تُعرض بيانات الأطراف حفاظاً على الخصوصية.</small></main><script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
+import {getFirestore,getDoc,doc} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import {firebaseConfig} from './js/firebase-config.js';
+const result=document.getElementById('result'),code=document.getElementById('code');
+const token=new URLSearchParams(location.search).get('id')||'';
+if(!/^[a-f0-9]{32}$/i.test(token)){result.textContent='رمز تحقق غير صحيح.';}
+else { try {const db=getFirestore(initializeApp(firebaseConfig));const snap=await getDoc(doc(db,'publicVerifications',token));
+if(!snap.exists()){result.textContent='لا يوجد عقد ساري مسجل بهذا الرمز، أو تم حذفه.';}
+else {const record=snap.data();result.textContent='تم العثور على عقد مسجل: رقم '+record.number;code.textContent=record.code;}
+} catch(e) {result.textContent='تعذر التحقق الآن. حاول مجدداً عند توفر الإنترنت.';} }
+</script></body></html>

@@ -2,6 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
+    function verificationPath(token) { return /databases/$(database)/documents/publicVerifications/$(token); }
+    function verificationMatches(number, token) {
+      return existsAfter(verificationPath(token))
+        && getAfter(verificationPath(token)).data.number == number;
+    }
     function counterPath() { return /databases/$(database)/documents/metadata/contractCounter; }
     function contractPath(number) { return /databases/$(database)/documents/contracts/$(string(number)); }
     function validFields() {
@@ -31,9 +36,12 @@ service cloud.firestore {
     match /contracts/{contractId} {
       allow get, list: if signedIn();
       allow create: if signedIn() && validFields()
-        && request.resource.data.keys().hasOnly(['number','fields','revision','createdBy','updatedBy','createdAt','updatedAt'])
+        && request.resource.data.keys().hasOnly(['number','fields','verificationId','revision','createdBy','updatedBy','createdAt','updatedAt'])
         && request.resource.data.number is int
         && request.resource.data.number >= 1001
+        && request.resource.data.verificationId is string
+        && request.resource.data.verificationId.size() == 32
+        && verificationMatches(request.resource.data.number,request.resource.data.verificationId)
         && contractId == string(request.resource.data.number)
         && request.resource.data.revision == 1
         && request.resource.data.createdBy == request.auth.uid
@@ -45,12 +53,40 @@ service cloud.firestore {
         && ( !exists(counterPath()) && request.resource.data.number == 1001
              || exists(counterPath()) && get(counterPath()).data.lastNumber == request.resource.data.number - 1 );
       allow update: if signedIn() && validFields()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fields','revision','updatedBy','updatedAt'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fields','verificationId','revision','updatedBy','updatedAt'])
         && resource.data.number == int(contractId)
+        && ( ('verificationId' in resource.data && request.resource.data.verificationId == resource.data.verificationId)
+          || (!('verificationId' in resource.data)
+            && request.resource.data.verificationId is string
+            && request.resource.data.verificationId.size() == 32
+            && verificationMatches(resource.data.number,request.resource.data.verificationId)) )
         && request.resource.data.revision == resource.data.revision + 1
         && request.resource.data.updatedBy == request.auth.uid
         && request.resource.data.updatedAt == request.time;
-      allow delete: if false;
+      allow delete: if signedIn() && resource.data.createdBy == request.auth.uid
+        && (!('verificationId' in resource.data)
+            || !existsAfter(verificationPath(resource.data.verificationId)));
+    }
+    match /publicVerifications/{token} {
+      // Public QR scanning only returns the number and verification code, never personal data.
+      allow get: if true;
+      allow list: if false;
+      allow create: if signedIn()
+        && token.size() == 32
+        && request.resource.data.keys().hasOnly(['number','code','createdAt'])
+        && request.resource.data.number is int
+        && request.resource.data.code is string
+        && request.resource.data.code.size() <= 65
+        && request.resource.data.createdAt == request.time
+        && existsAfter(contractPath(request.resource.data.number))
+        && getAfter(contractPath(request.resource.data.number)).data.verificationId == token
+        && getAfter(contractPath(request.resource.data.number)).data.updatedBy == request.auth.uid;
+      allow update: if false;
+      allow delete: if signedIn()
+        && resource.data.number is int
+        && exists(contractPath(resource.data.number))
+        && get(contractPath(resource.data.number)).data.createdBy == request.auth.uid
+        && !existsAfter(contractPath(resource.data.number));
     }
   }
 }

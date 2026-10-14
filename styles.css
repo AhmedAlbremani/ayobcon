@@ -761,3 +761,12 @@ font-size: 1rem;
         margin: 5px 0;
     }
 }
+
+/* QR seal: compact placement in the original stamp area. */
+
+.qr-seal { display:flex; flex-direction:column; align-items:center; gap:3px; }
+.qr-seal[hidden] { display:none!important; }
+.qr-image { width:104px; height:104px; display:flex; align-items:center; justify-content:center; }
+.qr-image img, .qr-image canvas { width:100px!important; height:100px!important; max-width:100%; }
+.qr-unique { font:600 8px/1.4 Arial,sans-serif; max-width:160px; overflow-wrap:anywhere; text-align:center; }
+@media print { .qr-image {width:26mm;height:26mm;} .qr-image img,.qr-image canvas {width:25mm!important;height:25mm!important;} .qr-unique{font-size:6pt;} }
