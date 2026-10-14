@@ -820,3 +820,69 @@ font-size: 1rem;
   .qr-unique { font-size: 5.5pt !important; line-height: 1.05 !important; max-width: 54mm !important; }
   .watermark { max-height: 100% !important; }
 }
+
+
+/* Balanced, full-height A4 contract print layout — print only */
+@media print {
+  @page { size: A4 portrait; margin: 6mm; }
+  html, body { width: auto !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; }
+  body { font-size: 10pt !important; line-height: 1.27 !important; }
+  .container, .main-content {
+    width: 198mm !important; max-width: 198mm !important; min-width: 0 !important;
+    padding: 0 !important; margin: 0 !important; height: auto !important;
+    min-height: 0 !important; border: none !important; box-shadow: none !important;
+  }
+  .main-content { display: block !important; }
+  .contract-section {
+    box-sizing: border-box !important;
+    width: 198mm !important; max-width: 198mm !important;
+    height: 277mm !important; min-height: 0 !important; max-height: none !important;
+    padding: 3mm 3mm 4mm !important; margin: 0 !important; border: 0 !important;
+    display: flex !important; flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: visible !important;
+    break-inside: avoid !important; page-break-inside: avoid !important;
+  }
+  .contract-header-container { flex: 0 0 auto !important; padding: 0 !important; margin: 0 0 2mm !important; }
+  .contract-logo { height: 25mm !important; width: auto !important; }
+  .company-name { font-size: 14pt !important; line-height: 1.18 !important; }
+  .company-details { font-size: 9.5pt !important; line-height: 1.22 !important; }
+  .contract-main-title { font-size: 13pt !important; }
+  .contract-date-display-wrapper { padding: 1mm !important; }
+  .contract-section > .contract-content-body {
+    flex: 1 1 auto !important; min-height: 0 !important;
+    display: flex !important; flex-direction: column !important;
+    justify-content: space-around !important;
+    font-size: 10pt !important; line-height: 1.25 !important; padding: 0 !important;
+  }
+  .contract-section > .contract-content-body > .contract-content-body {
+    flex: 0 0 auto !important; display: block !important;
+    margin-top: 2mm !important; padding: 0 !important;
+  }
+  .parties-section { gap: 3mm !important; margin: 0 0 2mm !important; }
+  .party { font-size: 10pt !important; line-height: 1.22 !important; padding: 2mm !important; margin: 0 !important; }
+  .party-title { font-size: 11pt !important; padding: 0 !important; margin: 0 0 1mm !important; }
+  .contract-field, .field-label, .dynamic-value { font-size: 9.6pt !important; line-height: 1.24 !important; }
+  .contract-field { margin-bottom: .5mm !important; }
+  .car-financial-data-container { gap: 3mm !important; margin: 0 0 2mm !important; }
+  .car-data-container, .financial-data-wrapper { padding: 2mm !important; }
+  .contract-paragraph { font-size: 9.5pt !important; line-height: 1.24 !important; margin: 1mm 0 !important; }
+  .additional-notes { margin: 1.5mm 0 !important; padding: 1.5mm !important; }
+  .notes-title, .notes-text { font-size: 9pt !important; line-height: 1.24 !important; }
+  .contract-obligations-styled { margin: 2mm 0 !important; padding: 2mm !important; }
+  .obligations-title { font-size: 10pt !important; margin: 0 0 .5mm !important; }
+  .contract-obligations-styled ul { margin: 0 !important; padding-right: 4mm !important; }
+  .contract-obligations-styled li { font-size: 9.3pt !important; line-height: 1.27 !important; margin: .5mm 0 !important; padding-right: 3mm !important; }
+  .disclaimer { font-size: 8.4pt !important; line-height: 1.22 !important; margin: 1mm 0 0 !important; padding: .8mm !important; }
+  .contract-section > .contract-content-body > .contract-content-body .parties-section {
+    margin: 0 !important; gap: 3mm !important;
+    break-inside: avoid !important; page-break-inside: avoid !important;
+  }
+  .signature-line-contract { font-size: 9.5pt !important; margin-bottom: 1mm !important; padding-bottom: 1mm !important; }
+  .signature-value { font-size: 9pt !important; min-height: 5mm !important; }
+  .qr-seal { gap: .5mm !important; break-inside: avoid !important; page-break-inside: avoid !important; }
+  .qr-image { width: 26mm !important; height: 26mm !important; }
+  .qr-image img, .qr-image canvas { width: 26mm !important; height: 26mm !important; }
+  .qr-unique { font-size: 6pt !important; line-height: 1.15 !important; max-width: 55mm !important; }
+  .watermark { max-height: 100% !important; }
+}
