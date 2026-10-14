@@ -770,3 +770,53 @@ font-size: 1rem;
 .qr-image img, .qr-image canvas { width:100px!important; height:100px!important; max-width:100%; }
 .qr-unique { font:600 8px/1.4 Arial,sans-serif; max-width:160px; overflow-wrap:anywhere; text-align:center; }
 @media print { .qr-image {width:26mm;height:26mm;} .qr-image img,.qr-image canvas {width:25mm!important;height:25mm!important;} .qr-unique{font-size:6pt;} }
+
+/* 2026-10-14: single-page A4 print layout with QR seal */
+@media print {
+  @page { size: A4 portrait; margin: 5mm; }
+  html, body { width: 200mm !important; min-height: 0 !important; height: auto !important; margin: 0 !important; padding: 0 !important; display: block !important; background: #fff !important; }
+  body { font-size: 9pt !important; line-height: 1.15 !important; }
+  .container, .main-content, .contract-section {
+    width: 200mm !important; max-width: 200mm !important; min-width: 0 !important;
+    min-height: 0 !important; max-height: none !important; height: auto !important;
+    margin: 0 !important; padding: 0 !important; border: 0 !important;
+    box-shadow: none !important; overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+  .main-content { display: block !important; }
+  .contract-section { padding: 1mm !important; }
+  .contract-header-container { padding: 0 !important; margin: 0 0 1mm !important; }
+  .contract-logo { height: 17mm !important; width: auto !important; }
+  .company-name { font-size: 11pt !important; line-height: 1.12 !important; }
+  .company-details { font-size: 8pt !important; line-height: 1.12 !important; }
+  .contract-main-title { font-size: 11pt !important; margin: 0 !important; }
+  .contract-date-display-wrapper { padding: 0 !important; }
+  .contract-content-body { font-size: 8pt !important; line-height: 1.16 !important; padding: 0 !important; }
+  .parties-section { gap: 2mm !important; margin: 0 0 1mm !important; }
+  .party { padding: 1mm !important; margin-top: 0 !important; font-size: 8pt !important; }
+  .party-title { font-size: 9pt !important; padding: 0 !important; margin: 0 0 1mm !important; }
+  .contract-field { font-size: 8.5pt !important; line-height: 1.17 !important; margin-bottom: 0 !important; }
+  .field-label, .dynamic-value { font-size: 8.5pt !important; line-height: 1.17 !important; }
+  .car-financial-data-container { margin-bottom: 1mm !important; gap: 2mm !important; }
+  .car-data-container, .financial-data-wrapper { padding: 1mm !important; }
+  .contract-paragraph { font-size: 8.5pt !important; line-height: 1.13 !important; margin: 1mm 0 !important; }
+  .additional-notes { margin: 1mm 0 !important; padding: 1mm !important; }
+  .notes-title, .notes-text { margin: 0 !important; line-height: 1.15 !important; font-size: 8pt !important; }
+  .contract-obligations-styled { margin: 1mm 0 0 !important; padding: 1.3mm !important; }
+  .obligations-title { font-size: 8.5pt !important; margin: 0 !important; }
+  .contract-obligations-styled ul { padding-right: 3mm !important; margin: 0 !important; }
+  .contract-obligations-styled li { font-size: 8pt !important; line-height: 1.13 !important; margin: 0 !important; padding-right: 3mm !important; }
+  .disclaimer { font-size: 7.5pt !important; line-height: 1.1 !important; margin: 0 !important; padding: 0 !important; }
+  .contract-signatures, .contract-content-body > .parties-section:last-child {
+    margin: 1mm 0 0 !important; padding: 1mm 0 0 !important;
+    break-inside: avoid !important; page-break-inside: avoid !important;
+  }
+  .signature-box-contract { margin: 0 1mm !important; }
+  .signature-line-contract { font-size: 8pt !important; margin-bottom: 1mm !important; padding-bottom: 1mm !important; }
+  .signature-value { font-size: 8pt !important; min-height: 0 !important; margin-top: 0 !important; }
+  .qr-seal { gap: 0 !important; break-inside: avoid !important; page-break-inside: avoid !important; }
+  .qr-image { width: 20mm !important; height: 20mm !important; }
+  .qr-image img, .qr-image canvas { width: 20mm !important; height: 20mm !important; }
+  .qr-unique { font-size: 5.5pt !important; line-height: 1.05 !important; max-width: 54mm !important; }
+  .watermark { max-height: 100% !important; }
+}
