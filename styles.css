@@ -886,3 +886,50 @@ font-size: 1rem;
   .qr-unique { font-size: 6pt !important; line-height: 1.15 !important; max-width: 55mm !important; }
   .watermark { max-height: 100% !important; }
 }
+
+/* A4 print refinement: use the printable area and reserve the bottom for the seal. */
+@media print {
+  @page { size: A4 portrait; margin: 6mm; }
+  html, body { width: auto !important; height: auto !important; margin: 0 !important; padding: 0 !important; }
+  .container, .main-content { width: 198mm !important; max-width: 198mm !important; min-height: 0 !important; height: auto !important; margin: 0 !important; padding: 0 !important; }
+  #contractSection.contract-section {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box !important;
+    width: 198mm !important;
+    max-width: 198mm !important;
+    height: 284mm !important;
+    max-height: 284mm !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 3mm 3mm 4mm !important;
+    overflow: hidden !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    break-inside: avoid !important;
+  }
+  #contractSection > .contract-header-container { flex: 0 0 auto !important; margin-bottom: 3mm !important; }
+  #contractSection > .contract-content-body {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  /* Let information blocks breathe; leave final signature group anchored low on A4. */
+  #contractSection > .contract-content-body > .parties-section:first-child { margin: 2mm 0 4mm !important; }
+  #contractSection .car-financial-data-container { margin-top: 2mm !important; margin-bottom: 3mm !important; }
+  #contractSection .additional-notes { margin: 3mm 0 !important; }
+  #contractSection .contract-obligations-styled { margin: 3mm 0 !important; padding: 2.5mm !important; }
+  #contractSection > .contract-content-body > .contract-content-body { margin-top: auto !important; padding-top: 6mm !important; flex: 0 0 auto !important; }
+  #contractSection > .contract-content-body > .contract-content-body .party { min-height: 32mm !important; }
+  #contractSection .contract-logo { height: 26mm !important; }
+  #contractSection .contract-field, #contractSection .field-label, #contractSection .dynamic-value { font-size: 10pt !important; line-height: 1.3 !important; }
+  #contractSection .contract-paragraph, #contractSection .notes-title, #contractSection .notes-text { font-size: 9.7pt !important; line-height: 1.28 !important; }
+  #contractSection .contract-obligations-styled li { font-size: 9.5pt !important; line-height: 1.3 !important; }
+  #contractSection .qr-image, #contractSection .qr-image img, #contractSection .qr-image canvas { width: 25mm !important; height: 25mm !important; }
+  #contractSection .qr-unique { font-size: 6pt !important; }
+}
